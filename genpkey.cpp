@@ -8,17 +8,15 @@ void check_args(int argc, const char * argv[]) {
     }
 }
 
-SEQUENCE * param_form(int argc, const char * param_set) {
-    if (argc == 3 && strncmp(param_set, "-s", 2) == 0) {
+SEQUENCE * param_form(const char * param_set) {
+    if (strncmp(param_set, "-s", 2) == 0) {
         return new SEQUENCE(
             pA256, aA256, bA256, eA256, dA256, mA256,
             qA256, xA256, yA256, uA256, vA256, PARAM_SIZE/2);
-    } else if (argc == 2) {
+    } else {
         return new SEQUENCE(
             pA512, aA512, bA512, eA512, dA512, mA512,
             qA512, xA512, yA512, uA512, vA512, PARAM_SIZE);
-    } else {
-        throw "Wrong paramSet\n";
     }
 }
 
@@ -38,7 +36,7 @@ int main(int argc, const char * argv[]) {
 
         //Обработка входных аргументов
         check_args(argc, argv);
-        SEQUENCE * paramSet = param_form(argc, argv[1]);
+        SEQUENCE * paramSet = param_form(argv[1]);
 
         //Обработка файла
         FILE *f;

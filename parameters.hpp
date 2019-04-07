@@ -11,6 +11,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <math.h>
+#include <cstdlib>
 
 typedef uint8_t u8;
 typedef const uint8_t cu8;
