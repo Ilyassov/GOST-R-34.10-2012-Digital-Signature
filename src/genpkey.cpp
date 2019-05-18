@@ -1,13 +1,15 @@
-#include "structure.hpp"
-#include "parameters.hpp"
-#include "functions.hpp"
+#include "../inc/structure.hpp"
+#include "../inc/parameters.hpp"
+#include "../inc/functions.hpp"
 
+//Проверка количества аргументов командной строки
 void check_args(int argc, const char * argv[]) {
-    if (argc != 2 && argc != 3) {
+    if (argc < 2 || argc > 3) {
         throw "Wrong number of arguments\n";
     }
 }
 
+//Формирование набора параметров
 SEQUENCE * param_form(const char * param_set) {
     if (strncmp(param_set, "-s", 2) == 0) {
         return new SEQUENCE(
@@ -20,8 +22,12 @@ SEQUENCE * param_form(const char * param_set) {
     }
 }
 
+//Открытие файла куда будем записывать
 FILE * open_file(int argc, const char * argv[]) {
     FILE * f;
+    if ((strncmp(argv[1], "-s", 2) == 0) && (argc == 2)) {
+        throw "No file name found!\n";
+    }
     const char * str = argc == 2 ? argv[1] : argv[2];
     if ((f = fopen(str, "wb")) == NULL) {
         throw "File not opened!\n";
@@ -47,11 +53,24 @@ int main(int argc, const char * argv[]) {
         memset(d, 0, PARAM_SIZE);
 
         //Генерация приватного ключа
-        gen_priv_key(d, paramSet, &rand_bytes);
+        gen_priv_key(d, paramSet);
+
+        //Для проверки
+        // printf("512:\n");
+        // printf("3065E25BDC52EB2821E122D4206E42B9F8C9");
+        // printf("CBD0DF169A8AB2DC3103242845C3B67DE17E");
+        // printf("EBC41AE489ACC6DAEC6A478D659FCCED00D2");
+        // printf("638E05FD8167B327F30F\n");
+
+        // printf("256:\n");
+        // printf("3065E25BDC52EB2821E122D4206E42B9F8C9");
+        // printf("CBD0DF169A8AB2DC3103242845C3\n");
+
+        // printf("Private key d for %zu:\n", paramSet->mode);
+        // print(d, paramSet->mode);
 
         //Печать ключа в файл
-        //(3-ий сходной аргумент)
-        for (size_t i = 0; i < PARAM_SIZE; i++) {
+        for (size_t i = 0; i < paramSet->mode; i++) {
             fwrite(&d[i], sizeof (u8), 1, f);
         }
 

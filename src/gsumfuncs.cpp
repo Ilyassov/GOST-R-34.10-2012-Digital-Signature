@@ -1,5 +1,5 @@
-#include "gsum.h"
-#include "const.h"
+#include "../inc/gsum.h"
+#include "../inc/const.h"
 
 void reverse(uint8_t *dest, size_t size) {
     for (size_t i = 0; i < size / 2; i++) {

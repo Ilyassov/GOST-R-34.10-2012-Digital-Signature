@@ -1,6 +1,5 @@
 #pragma once
 
-#include "structure.hpp"
 #include <iostream>
 #include <cstring>
 #include <stdio.h>
@@ -15,6 +14,8 @@
 
 typedef uint8_t u8;
 typedef const uint8_t cu8;
+typedef uint16_t u16;
+typedef const uint16_t cu16;
 
 #define STATE_SIZE  8
 #define INV_POWER   6
