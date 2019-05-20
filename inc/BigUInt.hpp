@@ -21,11 +21,12 @@ struct BigUInt {
     BigUInt div2();
     bool odd();
 
+    friend BigUInt operator% (const BigUInt &, const BigUInt &);
     friend BigUInt operator* (const BigUInt &, const BigUInt &);
     friend BigUInt operator+ (const BigUInt &, const BigUInt &);
     friend BigUInt operator- (const BigUInt &, const BigUInt &);
-    friend int operator== (const BigUInt &, const BigUInt &);
-    friend int operator!= (const BigUInt &, const BigUInt &);
+    friend bool operator== (const BigUInt &, const BigUInt &);
+    friend bool operator!= (const BigUInt &, const BigUInt &);
 };
 
 bool is_bigger(std::vector<u8> t, std::vector<u8> q, size_t size);

@@ -3,11 +3,11 @@
 #include "../inc/functions.hpp"
 #include "../inc/structure.hpp"
 
-int operator== (const BigUInt &u, const BigUInt &v) {
+bool operator== (const BigUInt &u, const BigUInt &v) {
 	return (u.number == v.number);
 }
 
-int operator!= (const BigUInt &u, const BigUInt &v) {
+bool operator!= (const BigUInt &u, const BigUInt &v) {
 	return !(u == v);
 }
 
@@ -28,9 +28,9 @@ BigUInt::BigUInt(u8 * src, size_t size) {
     }
 }
 
-size_t max(size_t a, size_t b) {
-    return a < b ? b : a;
-}
+// size_t max(size_t a, size_t b) {
+//     return a < b ? b : a;
+// }
 
 BigUInt::BigUInt(u8 val, size_t size) {
     for (size_t i = 0; i < size; i++) {
@@ -77,6 +77,8 @@ BigUInt operator- (const BigUInt &a, const BigUInt &b) {
 
     u16 overflow = a.number[a.number.size()-1];
 
+    // u8 smaller = 0x00;
+
     for (int i = a.number.size()-1; i >= 0; i--) {
 
         //Складываем в overflow по два разряда и вычитаем
@@ -91,6 +93,10 @@ BigUInt operator- (const BigUInt &a, const BigUInt &b) {
 
         res.number[i] = (u8) overflow;
         overflow >>= 8;
+
+        // if (a.number[i] < b.number[i]) {
+        //     smaller = 0x01;
+        // }
     }
     return res;
 }
@@ -112,8 +118,6 @@ bool BigUInt::odd(){
 }
 
 BigUInt operator* (const BigUInt &a, const BigUInt &b) {
-    //number, this -> a
-    //bigUInt -> b
     BigUInt num1 = a;
     BigUInt num2 = b;
 
@@ -139,5 +143,15 @@ BigUInt operator* (const BigUInt &a, const BigUInt &b) {
         }
     }
 
+    return res;
+}
+
+BigUInt operator% (const BigUInt &a, const BigUInt &b) {
+    BigUInt res = a;
+    std::cout << "res\t" << res << std::endl;
+    while (is_bigger(res.number, b.number, b.number.size())) {
+        res = res - b;
+        std::cout << "res\t" << res << std::endl;
+    }
     return res;
 }

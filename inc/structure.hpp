@@ -4,26 +4,31 @@
 
 struct SEQUENCE {
 
-    u8 p[PARAM_SIZE];
-    u8 a[PARAM_SIZE];
-    u8 b[PARAM_SIZE];
-    u8 e[PARAM_SIZE];
-    u8 d[PARAM_SIZE];
-    u8 m[PARAM_SIZE];
-    u8 q[PARAM_SIZE];
-    u8 x[PARAM_SIZE];
-    u8 y[PARAM_SIZE];
-    u8 u[PARAM_SIZE];
-    u8 v[PARAM_SIZE];
+    uint1024_t p;
+    uint1024_t a;
+    uint1024_t b;
+    uint1024_t e;
+    uint1024_t d;
+    uint1024_t m;
+    uint1024_t q;
+    uint1024_t x;
+    uint1024_t y;
+    uint1024_t u;
+    uint1024_t v;
     size_t mode;
 
-    SEQUENCE(cu8 *P, cu8 *A, cu8 *B,
-             cu8 *E, cu8 *D, cu8 *M,
-             cu8 *Q, cu8 *X, cu8 *Y,
-             cu8 *U, cu8 *V, size_t mode);
+    SEQUENCE(uint1024_t, uint1024_t, uint1024_t, uint1024_t,
+             uint1024_t, uint1024_t, uint1024_t, uint1024_t,
+             uint1024_t, uint1024_t, uint1024_t, size_t);
 
-    void setmode(size_t mode);
     void printStruct();
-    void setval(cu8 *from, u8 *to);
+};
 
+struct Point {
+    uint1024_t x;
+    uint1024_t y;
+
+    Point() : x(0), y(0) {};
+    Point(uint1024_t, uint1024_t);
+    friend std::ostream& operator << (std::ostream &s, Point);
 };

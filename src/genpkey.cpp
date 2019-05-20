@@ -1,5 +1,3 @@
-#include "../inc/structure.hpp"
-#include "../inc/parameters.hpp"
 #include "../inc/functions.hpp"
 
 //Проверка количества аргументов командной строки
@@ -68,6 +66,8 @@ int main(int argc, const char * argv[]) {
 
         // printf("Private key d for %zu:\n", paramSet->mode);
         // print(d, paramSet->mode);
+
+        // paramSet->printStruct();
 
         //Печать ключа в файл
         for (size_t i = 0; i < paramSet->mode; i++) {
