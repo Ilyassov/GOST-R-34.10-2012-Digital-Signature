@@ -46,13 +46,12 @@ int main(int argc, const char * argv[]) {
 
     try {
         check_args(argc);
-
         SEQUENCE * paramSet = param_form(argv[1]);
         FILE * privkey;
         privkey = (paramSet->mode == PARAM_SIZE) ?
             open_file_rb(argv[1]) : open_file_rb(argv[2]);
 
-        //Нужно, чтобы file.pub был создан
+        // Нужно, чтобы file.pub был создан
         // FILE * output;
         // output = file_open(argc, argv);
 
@@ -66,6 +65,17 @@ int main(int argc, const char * argv[]) {
         printf("buff:\n");
         print(buff, paramSet->mode);
 
+        /*  Для проверки конверторов
+        *   uint1024_t x("0x6FDBDEC3E20060DE92881A852551A7C7178052E70A4A6B4FC432E80C457E48FC7B6A4D73711BA12022CB86A57BAE980603A072A84A9B30FD56FDD49FCA2D45FE");
+        *   uint1024_t y("0x8B0A0B98B2D61ACCA5B3AFC7C7564DA9C2B42E1E4B11EFF4D28B33E7472CAF8A2B334F5A554B424FCCD6C231EF62F2C441B5EB6AB1561A260A548B68DD420978");
+        *   Point xy(x, y);
+        *   std::cout << "xy " << std::hex << xy << std::endl;
+        *   Point uv = convert_xy_to_uv(paramSet, xy);
+        *   std::cout << "converted uv " << std::hex << uv << std::endl;
+        *   xy = convert_uv_to_xy(paramSet, uv);
+        *   std::cout << "converted xy " << std::hex << xy << std::endl;
+        */
+
         uint1024_t k;
         uint1024_t p;
         k = init_1024(buff, paramSet->mode);
@@ -76,7 +86,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "uv\n";
         std::cout << std::hex << uv << std::endl;
 
-        Point xy = convert(paramSet, uv);
+        Point xy = convert_xy_to_uv(paramSet, uv);
         std::cout << "xy\n";
         std::cout << std::hex << xy << std::endl;
 

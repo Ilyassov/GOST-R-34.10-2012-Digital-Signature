@@ -135,7 +135,7 @@ Point sum_p(Point p1, Point p2, uint1024_t p, uint1024_t d, uint1024_t a) {
     uint1024_t y1y2 = (p1.y * p2.y) % p;
     uint1024_t x1x2 = (p1.x * p2.x) % p;
     uint1024_t ax1x2 = (a * x1x2) % p;
-    uint1024_t y1y2Max1x2 = y1y2 - ax1x2;
+    uint1024_t y1y2Max1x2 = (y1y2 + negative(ax1x2, p)) % p;
     uint1024_t dx1x2 = (d * x1x2) % p;
     uint1024_t dx1x2y1y2 = (dx1x2 * y1y2) % p;
     uint1024_t res1 = x1y2Sy1x2 * inverse((1 + dx1x2y1y2) % p, p);    
@@ -167,6 +167,11 @@ uint1024_t inverse(uint1024_t a, uint1024_t p) {
 	return res % p;
 }
 
+Point operator+ (Point a, Point b) {
+    return Point(a.x + b.x, a.y + b.y);
+}
+
+
 Point muL(Point x, uint1024_t k, uint1024_t p, uint1024_t d, uint1024_t a) {
     Point res(0, 1);
 
@@ -177,7 +182,7 @@ Point muL(Point x, uint1024_t k, uint1024_t p, uint1024_t d, uint1024_t a) {
         pows[i] = sum_p(pows[i - 1], pows[i - 1], p, d, a);
     }
     for (size_t i = 0; i < 8 * PARAM_SIZE; ++i) {
-        if (k & ( ( (uint1024_t)1) << (512 - i) )) {
+        if ((k >> i) & 1) {
             res = sum_p(res, pows[i], p, d, a);
         }
     }
@@ -206,14 +211,33 @@ Point mul(SEQUENCE* paramSet, uint1024_t k) {
     return muL(Point(u, v), k, p, d, a);
 }
 
-Point convert(SEQUENCE *paramSet, Point uv) {
+Point convert_uv_to_xy(SEQUENCE* paramSet, Point uv) {
     uint1024_t e = paramSet->e;
     uint1024_t d = paramSet->d;
     uint1024_t p = paramSet->p;
-    uint1024_t s = (((e - d) % p) * inverse(4, p)) % p;
-    uint1024_t t = (((e + d) % p) * inverse(6, p)) % p;
+    uint1024_t eMd = (e + negative(d, p)) % p;
+    uint1024_t s = (eMd * inverse(4, p)) % p;
+    uint1024_t eSd = (e + d) % p;
+    uint1024_t t = (eSd * inverse(6, p)) % p;
     uint1024_t num = (s * ((1 + uv.y) % p)) % p;
-    uint1024_t y = num * inverse( ( ( (1 + negative(uv.y, p)) % p) * uv.x) % p, p);
-    uint1024_t x = (num * inverse( (1 + (negative(uv.y, p) % p)) % p, p) % p) + t;
+    uint1024_t oneMv = (1 + negative(uv.y, p)) % p;
+    uint1024_t x = ((num * inverse(oneMv, p)) % p) + t;
+    uint1024_t y = num * inverse((oneMv  * uv.x) % p, p);
     return Point(x % p, y % p);
+}
+
+Point convert_xy_to_uv(SEQUENCE* paramSet, Point xy) {
+    uint1024_t e = paramSet->e;
+    uint1024_t d = paramSet->d;
+    uint1024_t p = paramSet->p;
+    uint1024_t eMd = (e + negative(d, p)) % p;
+    uint1024_t s = (eMd * inverse(4, p)) % p;
+    uint1024_t eSd = (e + d) % p;
+    uint1024_t t = (eSd * inverse(6, p)) % p;
+    uint1024_t xMt = (xy.x + negative(t, p)) % p;
+    uint1024_t xMtMs = (xMt + negative(s, p)) % p;
+    uint1024_t xMtSs = (xMt + s) % p;
+    uint1024_t u = xMt * inverse(xy.y, p);
+    uint1024_t v = xMtMs * inverse(xMtSs, p);
+    return Point(u % p, v % p);
 }

@@ -30,5 +30,6 @@ struct Point {
 
     Point() : x(0), y(0) {};
     Point(uint1024_t, uint1024_t);
+    friend Point operator+ (Point, Point);
     friend std::ostream& operator << (std::ostream &s, Point);
 };

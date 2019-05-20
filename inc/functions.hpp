@@ -20,5 +20,6 @@ Point muL(Point, uint1024_t, uint1024_t, uint1024_t, uint1024_t);
 //                     uint1024_t, uint1024_t, uint1024_t);
 
 Point sum_p(Point p1, Point p2, uint1024_t p, uint1024_t d, uint1024_t t);
-Point convert(SEQUENCE*, Point);
+Point convert_uv_to_xy(SEQUENCE*, Point);
+Point convert_xy_to_uv(SEQUENCE*, Point);
 uint1024_t prime(uint1024_t, uint1024_t p);
