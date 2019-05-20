@@ -72,6 +72,11 @@ int main(int argc, const char * argv[]) {
         
         Point uv = mul(paramSet, k);
 
+        // u8 u[PARAM_SIZE];
+        // u8 v[PARAM_SIZE];
+        // init_u8(u, uv.x, paramSet->mode);
+        // init_u8(v, uv.y, paramSet->mode);
+
         // std::cout << "uv\n";
         // std::cout << std::hex << uv << std::endl;
 

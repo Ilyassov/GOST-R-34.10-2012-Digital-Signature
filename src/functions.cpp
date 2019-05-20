@@ -173,31 +173,18 @@ Point operator+ (Point a, Point b) {
 
 
 Point muL(Point x, uint1024_t k, uint1024_t p, uint1024_t d, uint1024_t a) {
-    Point res(0, 1);
+   Point res(0, 1);
+   Point point = x;
 
-    Point pows[8 * PARAM_SIZE];
-    pows[0] = x;
-
-    for (size_t i = 1; i < 8 * PARAM_SIZE; ++i) {
-        pows[i] = sum_p(pows[i - 1], pows[i - 1], p, d, a);
-    }
-    for (size_t i = 0; i < 8 * PARAM_SIZE; ++i) {
-        if ((k >> i) & 1) {
-            res = sum_p(res, pows[i], p, d, a);
+    while (k != 0) {
+        if (k & 1) {
+            res = sum_p(res, point, p, d, a);
+            --k;
+        } else {
+            point = sum_p(point, point, p, d, a);
+            k >>= 1;
         }
     }
-
-    // Point point = x;
-
-    // while (k != 0) {
-    //     if (k & 1) {
-    //         res = sum_p(res, point, p, d, a);
-    //         --k;
-    //     } else {
-    //         point = sum_p(point, point, p, d, a);
-    //         k >>= 1;
-    //     }
-    // }
 
     return res;
 }
