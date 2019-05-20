@@ -207,7 +207,7 @@ Point mul(SEQUENCE* paramSet, uint1024_t k) {
     uint1024_t v = paramSet->v;
     uint1024_t p = paramSet->p;
     uint1024_t d = paramSet->d;
-    uint1024_t a = paramSet->a;
+    uint1024_t a = paramSet->e;
     return muL(Point(u, v), k, p, d, a);
 }
 
