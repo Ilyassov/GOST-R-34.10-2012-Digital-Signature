@@ -53,31 +53,16 @@ int main(int argc, const char * argv[]) {
         //Генерация приватного ключа
         gen_priv_key(d, paramSet);
 
-        //Для проверки
-        // printf("512:\n");
-        // printf("3065E25BDC52EB2821E122D4206E42B9F8C9");
-        // printf("CBD0DF169A8AB2DC3103242845C3B67DE17E");
-        // printf("EBC41AE489ACC6DAEC6A478D659FCCED00D2");
-        // printf("638E05FD8167B327F30F\n");
-
-        // printf("256:\n");
-        // printf("3065E25BDC52EB2821E122D4206E42B9F8C9");
-        // printf("CBD0DF169A8AB2DC3103242845C3\n");
-
-        // printf("Private key d for %zu:\n", paramSet->mode);
-        // print(d, paramSet->mode);
-
-        // paramSet->printStruct();
-
         //Печать ключа в файл
         for (size_t i = 0; i < paramSet->mode; i++) {
             fwrite(&d[i], sizeof (u8), 1, f);
         }
-
         fclose(f);
+
     } catch(const char * S) {
         std::cerr << S;
         return(1);
     }
+
     return 0;
 }

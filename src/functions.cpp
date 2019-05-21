@@ -1,5 +1,6 @@
 #include "../inc/functions.hpp"
 
+//Начало генерации случайного числа
 static union {
     uint64_t v;
     u8 a[STATE_SIZE];
@@ -53,7 +54,10 @@ void rand_bytes(u8 *buf, int num) {
         }
     }
 }
+//Конец генерации случайного числа
 
+//Печать массива байтов
+//размером size
 void print(cu8 *what, size_t size) {
     for (size_t i = 0; i < size ; i++) {
         printf("%02x", what[i]);
@@ -61,6 +65,8 @@ void print(cu8 *what, size_t size) {
     printf("\n");
 }
 
+//Печать структуры
+//Нужно для отладочной печати
 void SEQUENCE::printStruct() {
     std::cout << "p\n" << std::hex << p << std::endl;
     std::cout << "a\n" << std::hex << a << std::endl;
@@ -75,14 +81,16 @@ void SEQUENCE::printStruct() {
     std::cout << "v\n" << std::hex << v << std::endl;
 }
 
+//Инициализация структуры
 SEQUENCE::SEQUENCE(uint1024_t P, uint1024_t A, uint1024_t B, uint1024_t E,
                    uint1024_t D, uint1024_t M, uint1024_t Q, uint1024_t X,
-                   uint1024_t Y, uint1024_t U, uint1024_t V, size_t MODE){
+                   uint1024_t Y, uint1024_t U, uint1024_t V, size_t MODE) {
     p = P;  a = A;  b = B;  e = E;  d = D;
     m = M;  q = Q;  x = X;  y = Y;  u = U;
     v = V;  mode = MODE;
 }
 
+//Переворот байтов в массиве
 void reverse(u8 *t, size_t mode) {
 	size_t size = PARAM_SIZE-1;
 	for (size_t i = 0; i < PARAM_SIZE/2; i++) {
@@ -92,6 +100,7 @@ void reverse(u8 *t, size_t mode) {
 	}
 }
 
+//Генерация приватного ключа
 void gen_priv_key(
     u8 * d, SEQUENCE *paramSet) {
 
@@ -107,6 +116,7 @@ void gen_priv_key(
 	memcpy(d, t, paramSet->mode);
 }
 
+//Инициализация uint1024_t через массив байт
 uint1024_t init_1024(u8 *a, size_t size) {
     uint1024_t res = 0;
     for (size_t i = 0; i < size; i++) {
@@ -115,19 +125,20 @@ uint1024_t init_1024(u8 *a, size_t size) {
     return res;
 }
 
+//Инициализация точки
 Point::Point(uint1024_t x, uint1024_t y) {
     this->x = x;
     this->y = y;
 }
 
+//Оператор печати для точки
 std::ostream& operator << (std::ostream &s, Point p) {
     s << p.x << "\n" << p.y;
     return s;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-
+//Сумма двух точек на
+//скрученной кривой Эдвардса
 Point sum_p(Point p1, Point p2, uint1024_t p, uint1024_t d, uint1024_t a) {
     uint1024_t x1y2 = (p1.x * p2.y) % p;
     uint1024_t y1x2 = (p1.y * p2.x) % p;
@@ -143,10 +154,14 @@ Point sum_p(Point p1, Point p2, uint1024_t p, uint1024_t d, uint1024_t a) {
     return Point(res1 % p, res2 % p);
 }
 
+//Конвертирование отрицательного
+//элемента в положительный по модулю р
 uint1024_t negative(uint1024_t a, uint1024_t p) {
     return p - (a % p);
 }
 
+//Нахождение обратного по
+//модулю р элемента
 uint1024_t inverse(uint1024_t a, uint1024_t p) {
 	uint1024_t res = 1;
     uint1024_t one = 1;
@@ -167,11 +182,16 @@ uint1024_t inverse(uint1024_t a, uint1024_t p) {
 	return res % p;
 }
 
+//Обычная сумма для двух точек
+//Нужна была для проверки суммы
+//через алгоритм быстрого
+//возведения в степень
 Point operator+ (Point a, Point b) {
     return Point(a.x + b.x, a.y + b.y);
 }
 
-
+//Произведение двух чисел по алгоритму
+//быстрого возведения в степень
 Point muL(Point x, uint1024_t k, uint1024_t p, uint1024_t d, uint1024_t a) {
    Point res(0, 1);
    Point point = x;
@@ -189,6 +209,8 @@ Point muL(Point x, uint1024_t k, uint1024_t p, uint1024_t d, uint1024_t a) {
     return res;
 }
 
+//Подготовочная функция для суммы
+//через алгоритм быстрого возведения в степень
 Point mul(SEQUENCE* paramSet, uint1024_t k) {
     uint1024_t u = paramSet->u;
     uint1024_t v = paramSet->v;
@@ -198,6 +220,8 @@ Point mul(SEQUENCE* paramSet, uint1024_t k) {
     return muL(Point(u, v), k, p, d, a);
 }
 
+//Конвертация из точки на скрученной
+//кривой Эдвардста в точку в форме Вейерштрасса
 Point convert_uv_to_xy(SEQUENCE* paramSet, Point uv) {
     uint1024_t e = paramSet->e;
     uint1024_t d = paramSet->d;
@@ -213,6 +237,8 @@ Point convert_uv_to_xy(SEQUENCE* paramSet, Point uv) {
     return Point(x % p, y % p);
 }
 
+//Конвертация из точки в форме Вейерштрасса
+//в точку на скрученной кривой Эдвардста
 Point convert_xy_to_uv(SEQUENCE* paramSet, Point xy) {
     uint1024_t e = paramSet->e;
     uint1024_t d = paramSet->d;
@@ -227,4 +253,64 @@ Point convert_xy_to_uv(SEQUENCE* paramSet, Point xy) {
     uint1024_t u = xMt * inverse(xy.y, p);
     uint1024_t v = xMtMs * inverse(xMtSs, p);
     return Point(u % p, v % p);
+}
+
+//Заполнение массива байтов размера size
+void init_u8(u8* where, uint1024_t what, size_t size) {
+    size_t shift = size-1;
+    for (size_t i = 0; i < size; i++) {
+        where[i] = ( (uint8_t)(what >> ((shift - i) * 8)) ) & 0xFF;
+    }
+}
+
+//Чтение ключа из файла
+void read_data(u8* buff, FILE* privkey, size_t size) {
+    memset(buff, 0, size);
+    size_t data_read = 0;
+    while (data_read != size) {
+        data_read += fread(buff, sizeof(u8), size, privkey);
+    }
+    fclose(privkey);
+}
+
+//Открытие файла на бинарное чтение
+FILE * open_file_rb(const char * str) {
+    FILE * f;
+    if ((f = fopen(str, "rb")) == NULL) {
+        throw str;
+    }
+    return f;
+}
+
+//Открытие файла на бинарную запись
+FILE * open_file_wb(const char * str) {
+    FILE * f;
+    if ((f = fopen(str, "wb")) == NULL) {
+        throw str;
+    }
+    return f;
+}
+
+//Открыытие файла на запись в convpkey
+FILE * file_open(int argc, const char * argv[]) {
+    if ((argc == 2) || (argc == 3 && (strncmp(argv[1], "-s", 2) == 0))) {
+        return open_file_wb("keys/file.pub");
+    } else if (argc == 3 && (strncmp(argv[1], "-s", 2) != 0)) {
+        return open_file_wb(argv[2]);
+    } else if (argc == 4) {
+        return open_file_wb(argv[3]);
+    } else {
+        throw "File open error!\n";
+    }
+}
+
+//Печать ключа в файл
+void write_data(u8* u, u8* v, FILE* output, size_t size, int argc, const char** argv) {
+    for (size_t i = 0; i < size; i++) {
+        fwrite(&u[i], sizeof(u8), 1, output);
+    }
+    for (size_t i = 0; i < size; i++) {
+        fwrite(&v[i], sizeof(u8), 1, output);
+    }
+    fclose(output);
 }
