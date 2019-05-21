@@ -7,19 +7,6 @@ void check_args(int argc, const char * argv[]) {
     }
 }
 
-//Формирование набора параметров
-SEQUENCE * param_form(const char * param_set) {
-    if (strncmp(param_set, "-s", 2) == 0) {
-        return new SEQUENCE(
-            pA256, aA256, bA256, eA256, dA256, mA256,
-            qA256, xA256, yA256, uA256, vA256, PARAM_SIZE/2);
-    } else {
-        return new SEQUENCE(
-            pA512, aA512, bA512, eA512, dA512, mA512,
-            qA512, xA512, yA512, uA512, vA512, PARAM_SIZE);
-    }
-}
-
 //Открытие файла куда будем записывать
 FILE * open_file(int argc, const char * argv[]) {
     FILE * f;

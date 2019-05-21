@@ -29,7 +29,7 @@ void init(struct ctx *init_ctx, size_t bit_size) {
     init_ctx->size = bit_size;
 
     if (init_ctx->size) {
-        memset(init_ctx->h, IV_512, BLOCK_SIZE  );
+        memset(init_ctx->h, IV_512, BLOCK_SIZE);
     } else {
         memset(init_ctx->h, IV_256, BLOCK_SIZE);
     }

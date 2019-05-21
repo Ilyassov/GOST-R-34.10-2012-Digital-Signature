@@ -91,7 +91,7 @@ SEQUENCE::SEQUENCE(uint1024_t P, uint1024_t A, uint1024_t B, uint1024_t E,
 }
 
 //Переворот байтов в массиве
-void reverse(u8 *t, size_t mode) {
+void reverse_output(u8 *t, size_t mode) {
 	size_t size = PARAM_SIZE-1;
 	for (size_t i = 0; i < PARAM_SIZE/2; i++) {
 		u8 temp = t[i];
@@ -112,7 +112,7 @@ void gen_priv_key(
         rand_bytes(t, PARAM_SIZE);
         T = init_1024(t, PARAM_SIZE);
     } while (T == 0 or T >= q);
-    reverse(t, paramSet->mode);
+    reverse_output(t, paramSet->mode);
 	memcpy(d, t, paramSet->mode);
 }
 
@@ -267,7 +267,7 @@ void init_u8(u8* where, uint1024_t what, size_t size) {
 void read_data(u8* buff, FILE* privkey, size_t size) {
     memset(buff, 0, size);
     size_t data_read = 0;
-    while (data_read != size) {
+    while (data_read < size) {
         data_read += fread(buff, sizeof(u8), size, privkey);
     }
     fclose(privkey);
@@ -313,4 +313,50 @@ void write_data(u8* u, u8* v, FILE* output, size_t size, int argc, const char** 
         fwrite(&v[i], sizeof(u8), 1, output);
     }
     fclose(output);
+}
+
+//Формирование параметров работы ЭЦП
+SEQUENCE * param_form(const char * param_set) {
+    if (strncmp(param_set, "-s", 2) == 0) {
+        return new SEQUENCE(
+            pA256, aA256, bA256, eA256, dA256, mA256,
+            qA256, xA256, yA256, uA256, vA256, PARAM_SIZE/2);
+    } else {
+        return new SEQUENCE(
+            pA512, aA512, bA512, eA512, dA512, mA512,
+            qA512, xA512, yA512, uA512, vA512, PARAM_SIZE);
+    }
+}
+
+//Генерация r и s для ЭЦП
+void r_s(SEQUENCE* paramSet, u8* k_u8, uint1024_t d,
+          uint1024_t hash, uint1024_t& R, uint1024_t& S) {
+
+    uint1024_t k = 0;
+    uint1024_t r = 0;
+    uint1024_t s = 0;
+    uint1024_t q = paramSet->q;
+    uint1024_t e = hash % q;
+    e = e == 0 ? 1 : e;
+
+    do {
+        
+        do {
+        
+            rand_bytes(k_u8, PARAM_SIZE);
+            reverse_output(k_u8, paramSet->mode);
+            k = init_1024(k_u8, paramSet->mode);
+            Point uv = mul(paramSet, k);
+            Point xy = convert_uv_to_xy(paramSet, uv);
+            r = xy.x % paramSet->q;
+        
+        } while(r == 0);
+        
+        s = (((r * d) % q) + ((k * e) % q)) % q;
+
+    } while(s == 0);
+
+    R = r;
+    S = s;
+
 }

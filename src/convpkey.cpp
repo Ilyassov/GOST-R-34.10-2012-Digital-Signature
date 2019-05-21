@@ -9,19 +9,6 @@ void check_args(int argc) {
     }
 }
 
-//Формирование параметров работы ЭЦП
-SEQUENCE * param_form(const char * param_set) {
-    if (strncmp(param_set, "-s", 2) == 0) {
-        return new SEQUENCE(
-            pA256, aA256, bA256, eA256, dA256, mA256,
-            qA256, xA256, yA256, uA256, vA256, PARAM_SIZE/2);
-    } else {
-        return new SEQUENCE(
-            pA512, aA512, bA512, eA512, dA512, mA512,
-            qA512, xA512, yA512, uA512, vA512, PARAM_SIZE);
-    }
-}
-
 int main(int argc, const char * argv[]) {
 
     try {
@@ -44,15 +31,14 @@ int main(int argc, const char * argv[]) {
 
         //Произведение в скрученных кривых Эдвардса
         Point uv = mul(paramSet, k);
-        u8 u[PARAM_SIZE];
-        u8 v[PARAM_SIZE];
-        init_u8(u, uv.x, paramSet->mode);
-        init_u8(v, uv.y, paramSet->mode);
+        u8 PK[2][paramSet->mode];
+        init_u8(PK[0], uv.x, paramSet->mode);
+        init_u8(PK[1], uv.y, paramSet->mode);
 
         //Печать открытого ключа в файл
         FILE * output;
         output = file_open(argc, argv);
-        write_data(u, v, output, paramSet->mode, argc, argv);
+        write_data(PK[0], PK[1], output, paramSet->mode, argc, argv);
 
     } catch (const char * S) {
         std::cerr << S;

@@ -6,7 +6,7 @@
 void gen_priv_key(u8 *d, SEQUENCE *paramSetA256);
 void print(cu8 *what, size_t size);
 void rand_bytes(u8 *buf, int num);
-void reverse(u8 *t, size_t mode);
+void reverse_output(u8 *t, size_t mode);
 uint1024_t init_1024(u8 *a, size_t size);
 
 uint1024_t negative(uint1024_t, uint1024_t);
@@ -29,3 +29,6 @@ void write_data(u8*, u8*, FILE*, size_t, int, const char **);
 FILE * open_file_rb(const char*);
 FILE * open_file_wb(const char*);
 FILE * file_open(int, const char **);
+
+SEQUENCE * param_form(const char*);
+void r_s(SEQUENCE*, u8*, uint1024_t, uint1024_t, uint1024_t&, uint1024_t&);
