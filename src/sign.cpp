@@ -113,7 +113,6 @@ int main(int argc, const char* argv[]) {
         FILE * output;
         output = output_file(argc, argv);
         write_data(DS[0], DS[1], output, paramSet->mode, argc, argv);
-
     } catch (const char * S) {
         std::cerr << S;
     }

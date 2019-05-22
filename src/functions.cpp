@@ -264,13 +264,27 @@ void init_u8(u8* where, uint1024_t what, size_t size) {
 }
 
 //Чтение ключа из файла
-void read_data(u8* buff, FILE* privkey, size_t size) {
+void read_data(u8* buff, FILE* file, size_t size) {
     memset(buff, 0, size);
     size_t data_read = 0;
     while (data_read < size) {
-        data_read += fread(buff, sizeof(u8), size, privkey);
+        data_read += fread(buff, sizeof(u8), size, file);
     }
-    fclose(privkey);
+    fclose(file);
+}
+
+void read_bufs(u8* buf1, u8* buf2, FILE* file, size_t size) {
+    memset(buf1, 0, size);
+    memset(buf2, 0, size);
+    size_t data_read = 0;
+    while (data_read < size) {
+        data_read += fread(buf1, sizeof(u8), size, file);
+    }
+    data_read = 0;
+    while (data_read < size) {
+        data_read += fread(buf2, sizeof(u8), size, file);
+    }
+    fclose(file);
 }
 
 //Открытие файла на бинарное чтение
@@ -347,7 +361,7 @@ void r_s(SEQUENCE* paramSet, u8* k_u8, uint1024_t d,
             reverse_output(k_u8, paramSet->mode);
             k = init_1024(k_u8, paramSet->mode);
             Point uv = mul(paramSet, k);
-            Point xy = convert_uv_to_xy(paramSet, uv);
+            Point xy = uv;//convert_uv_to_xy(paramSet, uv);
             r = xy.x % paramSet->q;
         
         } while(r == 0);

@@ -24,6 +24,7 @@ uint1024_t prime(uint1024_t, uint1024_t p);
 void init_u8(u8*, uint1024_t, size_t);
 
 void read_data(u8*, FILE*, size_t);
+void read_bufs(u8*, u8*, FILE*, size_t);
 void write_data(u8*, u8*, FILE*, size_t, int, const char **);
 
 FILE * open_file_rb(const char*);

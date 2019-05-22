@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall -O2
 
-all: sign genpkey convpkey
+all: sign genpkey convpkey verify g256sum g512sum
 
 g512sum: g512sum.o gsumfuncs.o
 	$(CC) g512sum.o gsumfuncs.o -o g512sum
@@ -14,6 +14,9 @@ g512sum.o: src/g512sum.cpp
 
 g256sum.o: src/g256sum.cpp
 	$(CC) $(CFLAGS) src/g256sum.cpp
+
+verify: verify.o functions.o gsumfuncs.o
+	$(CC) verify.o functions.o gsumfuncs.o -o verify
 
 genpkey: genpkey.o functions.o
 	$(CC) functions.o genpkey.o -o genpkey
@@ -39,7 +42,10 @@ sign.o: src/sign.cpp
 functions.o: src/functions.cpp
 	$(CC) $(CFLAGS) src/functions.cpp
 
+verify.o: src/verify.cpp
+	$(CC) $(CFLAGS) src/verify.cpp
+
 clean:
-	rm -rf *.o main g512sum g256sum genpkey sign convpkey
+	rm -rf *.o main g512sum g256sum genpkey sign convpkey verify
 
 .PHONY: clean
