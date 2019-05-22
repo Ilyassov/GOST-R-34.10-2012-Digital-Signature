@@ -106,6 +106,7 @@ bool check_ds(uint1024_t r, uint1024_t s,
                           paramSet->d, paramSet->e);
     Point z2Q = muL(p, z2, paramSet->p, paramSet->d, paramSet->e);
     Point C = sum_p(z1P, z2Q, paramSet->p, paramSet->d, paramSet->e);
+    C = convert_uv_to_xy(paramSet, C);
     uint1024_t R = C.x % q;
     if (R == r) {
         return true;

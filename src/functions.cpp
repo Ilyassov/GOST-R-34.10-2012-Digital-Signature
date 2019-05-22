@@ -361,7 +361,7 @@ void r_s(SEQUENCE* paramSet, u8* k_u8, uint1024_t d,
             reverse_output(k_u8, paramSet->mode);
             k = init_1024(k_u8, paramSet->mode);
             Point uv = mul(paramSet, k);
-            Point xy = uv;//convert_uv_to_xy(paramSet, uv);
+            Point xy = convert_uv_to_xy(paramSet, uv);
             r = xy.x % paramSet->q;
         
         } while(r == 0);
